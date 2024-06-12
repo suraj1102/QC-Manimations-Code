@@ -3,6 +3,7 @@ from manim.animation.animation import Animation
 from manim_cad_drawing_utils import *
 import numpy as np
 
+
 class Particle:
     def __init__(self, oven: Circle, color) -> None:
         self.oven = oven
@@ -20,7 +21,7 @@ class Particle:
         xpos = self.random_gen.uniform(-oven.radius, oven.radius)
         ypos = self.random_gen.uniform(-oven.radius, oven.radius)
 
-        while(xpos * xpos + ypos * ypos >= oven.radius * oven.radius):
+        while (xpos * xpos + ypos * ypos >= oven.radius * oven.radius):
             xpos = self.random_gen.uniform(-oven.radius, oven.radius)
             ypos = self.random_gen.uniform(-oven.radius, oven.radius)
 
@@ -35,6 +36,7 @@ class Particle:
             self.new_position = self.generate_position()
             self.time_elapsed = 0
         return new_pos
+
 
 class Oven(Scene):
     def construct(self):
@@ -61,15 +63,17 @@ class Oven(Scene):
         self.add(particles)
         self.wait(5, frozen_frame=False)
 
+
 def create_textbox(color, string, string_color, height=1, width=2):
-    result = VGroup() # create a VGroup
+    result = VGroup()  # create a VGroup
     box = Rectangle(  # create a box
-        height=height, width=width, fill_color=color, 
+        height=height, width=width, fill_color=color,
         fill_opacity=0.2, stroke_color=color
     )
-    text = MathTex(string, color=string_color).scale(0.7).move_to(box.get_center()) # create text
-    result.add(box, text) # add both objects to the VGroup
+    text = MathTex(string, color=string_color).scale(0.7).move_to(box.get_center())  # create text
+    result.add(box, text)  # add both objects to the VGroup
     return result
+
 
 class quantizedMM(Scene):
     def construct(self):
@@ -77,7 +81,6 @@ class quantizedMM(Scene):
         oven = create_textbox(color=RED, string="Oven", string_color=WHITE)
 
         SGz = create_textbox(color=BLUE, string=r"SG\hat{z}", string_color=YELLOW).shift(LEFT * 1)
-
 
         boxes = VGroup(oven, SGz).arrange(RIGHT, buff=2).to_edge(LEFT, buff=1.5)
 
@@ -89,16 +92,20 @@ class quantizedMM(Scene):
         self.play(Create(silver_beam), Write(silver_atoms))
 
         spin_line_offset = 0.3
-        sz_up_line = Line(SGz.get_right() + [0, spin_line_offset, 0], (SGz.get_right() + [0, spin_line_offset, 0]) + [4, 0, 0])
-        sz_down_line = Line(SGz.get_right() + [0, -spin_line_offset, 0], (SGz.get_right() + [0, -spin_line_offset, 0]) + [4, 0, 0])
+        sz_up_line = Line(SGz.get_right() + [0, spin_line_offset, 0],
+                          (SGz.get_right() + [0, spin_line_offset, 0]) + [4, 0, 0])
+        sz_down_line = Line(SGz.get_right() + [0, -spin_line_offset, 0],
+                            (SGz.get_right() + [0, -spin_line_offset, 0]) + [4, 0, 0])
 
         self.play(
             Create(sz_up_line),
             Create(sz_down_line)
         )
 
-        sz_up_text = MathTex(r"S_z+ component", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(sz_up_line, UP)
-        sz_down_text = MathTex(r"S_z- component", substrings_to_isolate=["-", "z"], color=WHITE).scale(0.5).next_to(sz_down_line, DOWN)
+        sz_up_text = MathTex(r"S_z+ component", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(
+            sz_up_line, UP)
+        sz_down_text = MathTex(r"S_z- component", substrings_to_isolate=["-", "z"], color=WHITE).scale(0.5).next_to(
+            sz_down_line, DOWN)
         sz_up_text.set_color_by_tex("+", BLUE).set_color_by_tex("z", YELLOW)
         sz_down_text.set_color_by_tex("-", TEAL).set_color_by_tex("z", YELLOW)
 
@@ -107,10 +114,11 @@ class quantizedMM(Scene):
             Create(sz_down_text)
         )
 
-
         # Create a tall rectangle
-        screen = Rectangle(height=3, width=1, color=DARK_GRAY, fill_opacity=0.5).align_to(sz_up_line.get_end(), RIGHT + [1, 0, 0]).shift(RIGHT)
-        
+        screen = Rectangle(height=3, width=1, color=DARK_GRAY, fill_opacity=0.5).align_to(sz_up_line.get_end(),
+                                                                                          RIGHT + [1, 0, 0]).shift(
+            RIGHT)
+
         # Create the label "screen" and position it below the rectangle
         screen_label = Text("Screen", color=WHITE).scale(0.4).next_to(screen, DOWN)
 
@@ -118,8 +126,10 @@ class quantizedMM(Scene):
         self.play(DrawBorderThenFill(screen), Write(screen_label))
 
         # Adjust the appearance to illustrate upspin and downspin
-        upspin_rect = Rectangle(height=0.1, width=1, color=BLUE, fill_opacity=0.5).next_to(sz_up_line.get_end(), RIGHT, buff=0)
-        downspin_rect = Rectangle(height=0.1, width=1, color=TEAL, fill_opacity=0.5).next_to(sz_down_line.get_end(), RIGHT, buff=0)
+        upspin_rect = Rectangle(height=0.1, width=1, color=BLUE, fill_opacity=0.5).next_to(sz_up_line.get_end(), RIGHT,
+                                                                                           buff=0)
+        downspin_rect = Rectangle(height=0.1, width=1, color=TEAL, fill_opacity=0.5).next_to(sz_down_line.get_end(),
+                                                                                             RIGHT, buff=0)
 
         spin_up_text = Text("spin up", color=BLUE).scale(0.3).next_to(upspin_rect, UP, buff=0.1)
         spin_down_text = Text("spin down", color=TEAL).scale(0.3).next_to(downspin_rect, DOWN, buff=0.1)
@@ -151,7 +161,8 @@ class quantizedMM(Scene):
         up = VGroup(sup, sup_text)
 
         # Sdown and sdown_text
-        sdown = MathTex(r"|z,-\rangle", substrings_to_isolate=["z"], color=TEAL).move_to(text1.get_center() + [5, -1, 0])
+        sdown = MathTex(r"|z,-\rangle", substrings_to_isolate=["z"], color=TEAL).move_to(
+            text1.get_center() + [5, -1, 0])
         sdown.set_color_by_tex("z", YELLOW)
         sdown_text = Text("spin down", color=TEAL).scale(0.3).next_to(sdown, DOWN, buff=0.1)
         down = VGroup(sdown, sdown_text)
@@ -170,51 +181,60 @@ class quantizedMM(Scene):
 
         self.wait()
 
+
 class fig1_3a(Scene):
     def construct(self):
         oven = create_textbox(color=RED, string="Oven", string_color=RED)
         SGz = create_textbox(color=BLUE, string=r"SG\hat{z}", string_color=YELLOW)
         grp1 = VGroup(oven, SGz).arrange(RIGHT, buff=1).to_edge(LEFT, buff=0.7)
-        SGz2 = create_textbox(color=BLUE, string=r"SG\hat{z}", string_color=YELLOW).shift(LEFT * 1).next_to(grp1, RIGHT, buff=3)
+        SGz2 = create_textbox(color=BLUE, string=r"SG\hat{z}", string_color=YELLOW).shift(LEFT * 1).next_to(grp1, RIGHT,
+                                                                                                            buff=3)
 
         silver_beam = Line(oven.get_right(), SGz.get_left(), color=WHITE)
         silver_atoms = MathTex(r"Ag\,Atoms", color=LIGHT_GRAY).scale(0.3).next_to(silver_beam, DOWN, buff=0.2)
 
         spin_line_offset = 0.3
         sz_up_line = Line(SGz.get_right() + [0, spin_line_offset, 0], SGz2.get_left() + [0, spin_line_offset, 0])
-        sz_down_line = Line(SGz.get_right() + [0, -spin_line_offset, 0], (SGz2.get_left()/2 + [-0.5, 0, 0]) + [0, -spin_line_offset, 0])
+        sz_down_line = Line(SGz.get_right() + [0, -spin_line_offset, 0],
+                            (SGz2.get_left() / 2 + [-0.5, 0, 0]) + [0, -spin_line_offset, 0])
 
         obsticle = Rectangle(WHITE, 0.5, 0.2, )
         obsticle.move_to(sz_down_line.get_end() + [obsticle.width / 2, 0, 0])
         hatch1 = Hatch_lines(obsticle, angle=PI / 6, offset=0.1, stroke_width=2)
         hatch2 = Hatch_lines(obsticle, angle=PI / 6 + PI / 2, offset=0.1, stroke_width=2)
 
-        sz_up_text = MathTex(r"S_z+ comp.", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(sz_up_line, UP)
-        sz_down_text = MathTex(r"S_z- comp.", substrings_to_isolate=["-", "z"], color=WHITE).scale(0.5).next_to(sz_down_line, DOWN)
+        sz_up_text = MathTex(r"S_z+ comp.", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(
+            sz_up_line, UP)
+        sz_down_text = MathTex(r"S_z- comp.", substrings_to_isolate=["-", "z"], color=WHITE).scale(0.5).next_to(
+            sz_down_line, DOWN)
         sz_up_text.set_color_by_tex("+", BLUE).set_color_by_tex("z", YELLOW)
         sz_down_text.set_color_by_tex("-", TEAL).set_color_by_tex("z", YELLOW)
 
         sz2_up_line = Line(SGz2.get_right() + [0, spin_line_offset, 0], SGz2.get_right() + [2.5, spin_line_offset, 0])
         sz2_down_line = DashedLine(
-            SGz2.get_right() + [0, -spin_line_offset, 0], 
+            SGz2.get_right() + [0, -spin_line_offset, 0],
             SGz2.get_right() + [2.5, -spin_line_offset, 0],
-            )
+        )
 
-        sz2_up_text = MathTex(r"S_z+ comp.", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(sz2_up_line, UP)
-        sz2_down_text = MathTex(r"\text{No} \,\; S_z- comp.", substrings_to_isolate=["-", "z"], color=WHITE).scale(0.5).next_to(sz2_down_line, DOWN)
+        sz2_up_text = MathTex(r"S_z+ comp.", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(
+            sz2_up_line, UP)
+        sz2_down_text = MathTex(r"\text{No} \,\; S_z- comp.", substrings_to_isolate=["-", "z"], color=WHITE).scale(
+            0.5).next_to(sz2_down_line, DOWN)
         sz2_up_text.set_color_by_tex("+", BLUE).set_color_by_tex("z", YELLOW)
         sz2_down_text.set_color_by_tex("-", TEAL).set_color_by_tex("z", YELLOW)
 
         ## Explaination Bit
-        sup = MathTex(r"|z,+\rangle", substrings_to_isolate=["z"], color=BLUE).move_to(sz_up_text.get_center() + [0, 1, 0])
+        sup = MathTex(r"|z,+\rangle", substrings_to_isolate=["z"], color=BLUE).move_to(
+            sz_up_text.get_center() + [0, 1, 0])
         sup.set_color_by_tex("z", YELLOW)
         sup.scale(0.6)
 
-        sdown = MathTex(r"|z,-\rangle", substrings_to_isolate=["z"], color=TEAL).move_to(sz_down_text.get_center() + [0, -1, 0])
+        sdown = MathTex(r"|z,-\rangle", substrings_to_isolate=["z"], color=TEAL).move_to(
+            sz_down_text.get_center() + [0, -1, 0])
         sdown.set_color_by_tex("z", YELLOW)
         sdown.scale(0.6)
 
-         # Create individual parts with different colors
+        # Create individual parts with different colors
         part1 = MathTex(r"|z,-\rangle", color=TEAL, substrings_to_isolate=["z"])
         part1.set_color_by_tex("z", YELLOW)
         part2 = Tex(r" is blocked and only ")
@@ -223,7 +243,7 @@ class fig1_3a(Scene):
         part4 = Tex(r" is passed through second ")
         part5 = Tex(r"$ SG\hat{z} $", color=YELLOW)
         part6 = Tex(r" setup")
-        
+
         # Arrange them in a single line
         sentence1 = VGroup(part1, part2, part3, part4, part5, part6).arrange(RIGHT)
 
@@ -234,7 +254,7 @@ class fig1_3a(Scene):
         part2 = MathTex(r"|z,+\rangle", color=BLUE, substrings_to_isolate=["z"])
         part2.set_color_by_tex("z", YELLOW)
         part3 = Tex(r" state again")
-        
+
         sentence2 = VGroup(part1, part2, part3).arrange(RIGHT)
         sentence2.scale(0.6)
         sentence2.next_to(sentence1, DOWN)
@@ -245,16 +265,15 @@ class fig1_3a(Scene):
         part2 = Tex(r" has no component of ")
         part3 = MathTex(r"|z,+\rangle", color=BLUE, substrings_to_isolate=["z"])
         part3.set_color_by_tex("z", YELLOW)
-        
+
         # Arrange them in a single line
         sentence3 = VGroup(part1, part2, part3).arrange(RIGHT)
         sentence3.scale(0.6)
         sentence3.next_to(sentence2, DOWN)
 
-
         ## Playing out the animations
         self.play(DrawBorderThenFill(VGroup(grp1, SGz2)))
-        
+
         self.wait()
 
         self.play(Create(silver_beam), Write(silver_atoms))
@@ -268,7 +287,7 @@ class fig1_3a(Scene):
         self.play(Write(sz2_up_text))
 
         self.wait()
-        
+
         self.play(DrawBorderThenFill(VGroup(obsticle, hatch1, hatch2)))
 
         self.play(Create(sz_down_line))
@@ -286,38 +305,45 @@ class fig1_3a(Scene):
 
         self.wait()
 
+
 class fig1_3b(Scene):
     def construct(self):
         oven = create_textbox(color=RED, string="Oven", string_color=RED)
         SGz = create_textbox(color=BLUE, string=r"SG\hat{z}", string_color=YELLOW)
         grp1 = VGroup(oven, SGz).arrange(RIGHT, buff=1).to_edge(LEFT, buff=0.7)
-        SGx = create_textbox(color=PURPLE, string=r"SG\hat{x}", string_color=GREEN).shift(LEFT * 1).next_to(grp1, RIGHT, buff=3)
+        SGx = create_textbox(color=PURPLE, string=r"SG\hat{x}", string_color=GREEN).shift(LEFT * 1).next_to(grp1, RIGHT,
+                                                                                                            buff=3)
 
         silver_beam = Line(oven.get_right(), SGz.get_left(), color=WHITE)
         silver_atoms = MathTex(r"Ag\,Atoms", color=LIGHT_GRAY).scale(0.3).next_to(silver_beam, DOWN, buff=0.2)
 
         spin_line_offset = 0.3
         sz_up_line = Line(SGz.get_right() + [0, spin_line_offset, 0], SGx.get_left() + [0, spin_line_offset, 0])
-        sz_down_line = Line(SGz.get_right() + [0, -spin_line_offset, 0], (SGx.get_left()/2 + [-0.5, 0, 0]) + [0, -spin_line_offset, 0])
+        sz_down_line = Line(SGz.get_right() + [0, -spin_line_offset, 0],
+                            (SGx.get_left() / 2 + [-0.5, 0, 0]) + [0, -spin_line_offset, 0])
 
         obsticle = Rectangle(WHITE, 0.5, 0.2, )
         obsticle.move_to(sz_down_line.get_end() + [obsticle.width / 2, 0, 0])
         hatch1 = Hatch_lines(obsticle, angle=PI / 6, offset=0.1, stroke_width=2)
         hatch2 = Hatch_lines(obsticle, angle=PI / 6 + PI / 2, offset=0.1, stroke_width=2)
 
-        sz_up_text = MathTex(r"S_z+ comp.", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(sz_up_line, UP)
-        sz_down_text = MathTex(r"S_z- comp.", substrings_to_isolate=["-", "z"], color=WHITE).scale(0.5).next_to(sz_down_line, DOWN)
+        sz_up_text = MathTex(r"S_z+ comp.", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(
+            sz_up_line, UP)
+        sz_down_text = MathTex(r"S_z- comp.", substrings_to_isolate=["-", "z"], color=WHITE).scale(0.5).next_to(
+            sz_down_line, DOWN)
         sz_up_text.set_color_by_tex("+", BLUE).set_color_by_tex("z", YELLOW)
         sz_down_text.set_color_by_tex("-", TEAL).set_color_by_tex("z", YELLOW)
 
         sx_up_line = Line(SGx.get_right() + [0, spin_line_offset, 0], SGx.get_right() + [2.5, spin_line_offset, 0])
         sx_down_line = Line(
-            SGx.get_right() + [0, -spin_line_offset, 0], 
+            SGx.get_right() + [0, -spin_line_offset, 0],
             SGx.get_right() + [2.5, -spin_line_offset, 0],
-            )
+        )
 
-        sx_up_text = MathTex(r"S_x+ comp.", substrings_to_isolate=["+", "x"], color=WHITE).scale(0.5).next_to(sx_up_line, UP)
-        sx_down_text = MathTex(r"S_x- comp.", substrings_to_isolate=["-", "x"], color=WHITE).scale(0.5).next_to(sx_down_line, DOWN)
+        sx_up_text = MathTex(r"S_x+ comp.", substrings_to_isolate=["+", "x"], color=WHITE).scale(0.5).next_to(
+            sx_up_line, UP)
+        sx_down_text = MathTex(r"S_x- comp.", substrings_to_isolate=["-", "x"], color=WHITE).scale(0.5).next_to(
+            sx_down_line, DOWN)
         sx_up_text.set_color_by_tex("+", BLUE).set_color_by_tex("x", YELLOW)
         sx_down_text.set_color_by_tex("-", TEAL).set_color_by_tex("x", YELLOW)
 
@@ -376,10 +402,9 @@ class fig1_3b(Scene):
         sentence5.scale(0.6)
         sentence5.next_to(sentence4, DOWN)
 
-
         ## Playing out the animations
         self.play(DrawBorderThenFill(VGroup(grp1, SGx)))
-        
+
         self.wait()
 
         self.play(Create(silver_beam), Write(silver_atoms))
@@ -393,7 +418,7 @@ class fig1_3b(Scene):
         self.play(Write(sx_up_text))
 
         self.wait()
-        
+
         self.play(DrawBorderThenFill(VGroup(obsticle, hatch1, hatch2)))
 
         self.play(Create(sz_down_line))
@@ -414,13 +439,15 @@ class fig1_3b(Scene):
 
         self.wait()
 
+
 class fig1_3c(ZoomedScene):
     def construct(self):
         # Define 4 boxes: oven, SGz, SGx, SGz2
         oven = create_textbox(color=RED, string="Oven", string_color=RED)
         SGz = create_textbox(color=BLUE, string=r"SG\hat{z}", string_color=YELLOW)
         grp1 = VGroup(oven, SGz).arrange(RIGHT, buff=0.7).to_edge(LEFT, buff=0.5)
-        SGx = create_textbox(color=PURPLE, string=r"SG\hat{x}", string_color=GREEN).shift(LEFT * 1).next_to(grp1, RIGHT, buff=1.5)
+        SGx = create_textbox(color=PURPLE, string=r"SG\hat{x}", string_color=GREEN).shift(LEFT * 1).next_to(grp1, RIGHT,
+                                                                                                            buff=1.5)
         SGz2 = create_textbox(color=BLUE, string=r"SG\hat{z}", string_color=YELLOW).next_to(SGx, buff=1.5)
 
         # Silver Beam - Oven to SGz
@@ -430,41 +457,48 @@ class fig1_3c(ZoomedScene):
         # Spin Lines - SGz to SGx
         spin_line_offset = 0.3
         sz_up_line = Line(SGz.get_right() + [0, spin_line_offset, 0], SGx.get_left() + [0, spin_line_offset, 0])
-        sz_down_line = Line(SGz.get_right() + [0, -spin_line_offset, 0], (SGx.get_left() + [-sz_up_line.get_length() / 2,0,0]) + [0, -spin_line_offset, 0])
+        sz_down_line = Line(SGz.get_right() + [0, -spin_line_offset, 0],
+                            (SGx.get_left() + [-sz_up_line.get_length() / 2, 0, 0]) + [0, -spin_line_offset, 0])
 
         obsticle = Rectangle(WHITE, 0.5, 0.2, )
         obsticle.move_to(sz_down_line.get_end() + [obsticle.width / 2, 0, 0])
         hatch1 = Hatch_lines(obsticle, angle=PI / 6, offset=0.1, stroke_width=2)
         hatch2 = Hatch_lines(obsticle, angle=PI / 6 + PI / 2, offset=0.1, stroke_width=2)
 
-        sz_up_text = MathTex(r"S_z+ beam", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(sz_up_line, UP)
-        sz_down_text = MathTex(r"S_z- beam", substrings_to_isolate=["-", "z"], color=WHITE).scale(0.5).next_to(obsticle, DOWN)
+        sz_up_text = MathTex(r"S_z+ beam", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(sz_up_line,
+                                                                                                             UP)
+        sz_down_text = MathTex(r"S_z- beam", substrings_to_isolate=["-", "z"], color=WHITE).scale(0.5).next_to(obsticle,
+                                                                                                               DOWN)
         sz_up_text.set_color_by_tex("+", BLUE).set_color_by_tex("z", YELLOW)
         sz_down_text.set_color_by_tex("-", TEAL).set_color_by_tex("z", YELLOW)
 
-
         # Spin Lines - SGx to SGz2
         sx_up_line = Line(SGx.get_right() + [0, spin_line_offset, 0], SGz2.get_left() + [0, spin_line_offset, 0])
-        sx_down_line = Line(SGx.get_right() + [0, -spin_line_offset, 0], (SGz2.get_left() + [-sx_up_line.get_length() / 2, 0, 0]) + [0, -spin_line_offset, 0])
+        sx_down_line = Line(SGx.get_right() + [0, -spin_line_offset, 0],
+                            (SGz2.get_left() + [-sx_up_line.get_length() / 2, 0, 0]) + [0, -spin_line_offset, 0])
 
-        
         obsticle2 = Rectangle(WHITE, 0.5, 0.2, )
         obsticle2.move_to(sx_down_line.get_end() + [obsticle2.width / 2, 0, 0])
         hatch1_2 = Hatch_lines(obsticle2, angle=PI / 6, offset=0.1, stroke_width=2)
         hatch2_2 = Hatch_lines(obsticle2, angle=PI / 6 + PI / 2, offset=0.1, stroke_width=2)
 
-        sx_up_text = MathTex(r"S_x+ beam", substrings_to_isolate=["+", "x"], color=WHITE).scale(0.5).next_to(sx_up_line, UP)
-        sx_down_text = MathTex(r"S_x- beam", substrings_to_isolate=["-", "x"], color=WHITE).scale(0.5).next_to(obsticle2, DOWN)
+        sx_up_text = MathTex(r"S_x+ beam", substrings_to_isolate=["+", "x"], color=WHITE).scale(0.5).next_to(sx_up_line,
+                                                                                                             UP)
+        sx_down_text = MathTex(r"S_x- beam", substrings_to_isolate=["-", "x"], color=WHITE).scale(0.5).next_to(
+            obsticle2, DOWN)
         sx_up_text.set_color_by_tex("+", BLUE).set_color_by_tex("x", YELLOW)
         sx_down_text.set_color_by_tex("-", TEAL).set_color_by_tex("x", YELLOW)
 
         # Spin lines SGz2 to detector
 
         sz2_up_line = Line(SGz2.get_right() + [0, spin_line_offset, 0], SGz2.get_right() + [0.3, spin_line_offset, 0])
-        sz2_down_line = Line(SGz2.get_right() + [0, -spin_line_offset, 0], SGz2.get_right() + [0.3, -spin_line_offset, 0])
+        sz2_down_line = Line(SGz2.get_right() + [0, -spin_line_offset, 0],
+                             SGz2.get_right() + [0.3, -spin_line_offset, 0])
 
-        sz2_up_text = MathTex(r"S_z+ beam", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(sz2_up_line, RIGHT, buff=0.1)
-        sz2_down_text = MathTex(r"S_z- beam", substrings_to_isolate=["-", "z"], color=WHITE).scale(0.5).next_to(sz2_down_line, RIGHT, buff=0.1)
+        sz2_up_text = MathTex(r"S_z+ beam", substrings_to_isolate=["+", "z"], color=WHITE).scale(0.5).next_to(
+            sz2_up_line, RIGHT, buff=0.1)
+        sz2_down_text = MathTex(r"S_z- beam", substrings_to_isolate=["-", "z"], color=WHITE).scale(0.5).next_to(
+            sz2_down_line, RIGHT, buff=0.1)
         sz2_up_text.set_color_by_tex("+", BLUE).set_color_by_tex("z", YELLOW)
         sz2_down_text.set_color_by_tex("-", TEAL).set_color_by_tex("z", YELLOW)
 
@@ -482,7 +516,7 @@ class fig1_3c(ZoomedScene):
         sentence1.next_to(brace, DOWN, buff=0.5)
 
         sentence2 = Tex(r"we see equal number of atoms with states ").next_to(sentence1, DOWN).scale(0.6)
-        
+
         part1 = MathTex(r"|z,+\rangle", color=BLUE, substrings_to_isolate=["z"]).set_color_by_tex("z", YELLOW)
         part2 = Tex(" and ")
         part3 = MathTex(r"|z,-\rangle", color=TEAL, substrings_to_isolate=["z"]).set_color_by_tex("z", YELLOW)
@@ -493,7 +527,7 @@ class fig1_3c(ZoomedScene):
 
         sen1 = Tex(r"This is weird.").scale(0.6).align_to(brace2, UP).shift(LEFT * 3.5)
         sen1.set_color_by_gradient(BLUE, LIGHT_BROWN)
-        
+
         part1 = Tex(r"Classically we would only except a ")
         part2 = MathTex(r"|z,+\rangle", color=BLUE, substrings_to_isolate=["z"]).set_color_by_tex("z", YELLOW)
         part3 = Tex(r" beam")
@@ -516,9 +550,6 @@ class fig1_3c(ZoomedScene):
         s2 = VGroup(part3, part4, part5, part6).arrange(RIGHT)
 
         last_line = VGroup(s1, s2).arrange(DOWN).scale(0.6).move_to(ORIGIN).shift(DOWN * 4.5)
-        
-
-        
 
         # Animations
         self.play(DrawBorderThenFill(VGroup(grp1, SGx, SGz2)))
@@ -528,7 +559,7 @@ class fig1_3c(ZoomedScene):
 
         self.play(Create(sz_up_line))
         self.play(Write(sz_up_text))
-        
+
         self.play(DrawBorderThenFill(VGroup(obsticle, hatch1, hatch2)), Create(sz_down_line))
         self.play(Write(sz_down_text))
 
@@ -580,5 +611,3 @@ class fig1_3c(ZoomedScene):
         self.play(Write(last_line), run_time=2)
 
         self.wait()
-
-       
