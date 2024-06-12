@@ -151,12 +151,13 @@ class first(Scene):
         )
 
         isSpinUp = np.random.randint(0, 2) == 0
-        function = ParametricFunction(self.spinUpFunction if isSpinUp  else self.spinDownFunction, t_range=[0, 5.5])
-        if isSpinUp:
-            function.move_to(boundary.get_edge_center(RIGHT) + np.array([boundaryRadius, function.height / 2, 0]))
-        else:
-            function.move_to(boundary.get_edge_center(RIGHT) + np.array([boundaryRadius, -function.height / 2, 0]))
-        self.add(function)
+        function = ParametricFunction(self.spinUpFunction if isSpinUp else self.spinDownFunction, t_range=[0, 5.5])
+
+        # Move the function such that the start point is at the right edge of the circle
+        # I don't know why this works but it somehow does
+        function.shift(RIGHT * boundary.get_edge_center(RIGHT)[0] + UP * boundary.get_edge_center(RIGHT)[1])
+
+        # self.add(function)
 
         self.play(
             MoveAlongPath(dots[dotIndex], function),
