@@ -98,7 +98,7 @@ class Particle:
 
 class first(Scene):
     def construct(self):
-        boundary = Circle(2, RED, fill_opacity=0.3).shift(LEFT * 3)
+        boundary = Circle(1.75, RED, fill_opacity=0.3).shift(LEFT * 4)
         boundaryRadius = boundary.radius
         boundaryPosition = np.array([boundary.get_x(), boundary.get_y()])
         self.add(boundary)
