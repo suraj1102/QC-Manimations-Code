@@ -1,6 +1,8 @@
 from manim import *
 import numpy as np
+import random
 from typing import List
+from Magnets import Magnets
 
 
 class Particle:
@@ -98,17 +100,21 @@ class Particle:
 
 class first(Scene):
     def construct(self):
-        boundary = Circle(1.75, RED, fill_opacity=0.3).shift(LEFT * 4)
-        boundaryRadius = boundary.radius
+        boundaryRadius = 1.75
+        boundary = Circle(boundaryRadius, RED, fill_opacity=0.3).shift(LEFT * 4)
         boundaryPosition = np.array([boundary.get_x(), boundary.get_y()])
         self.add(boundary)
+
+        magnets = Magnets().createMagnets().scale(0.65).shift(RIGHT * 1)
+        self.add(magnets)
 
         numParticles = 5
 
         dots = VGroup(*[Dot().scale(1.2) for _ in range(numParticles)])
         particles = [Particle(dots[0].radius, boundaryRadius, boundaryPosition) for _ in range(numParticles)]
 
-        path = particles[0].generatePath(0, 5)
+        shoot_button = Magnets().create_textbox(BLUE, "Shoot", YELLOW, 1, 3.5).scale(0.3).next_to(boundary, DOWN, buff=1)
+        self.add(shoot_button)
 
         def dot_updater(dot: Mobject, dt, particle_index):
             particles[particle_index].updatePosition(dt)
@@ -127,11 +133,37 @@ class first(Scene):
         self.wait(3)
 
         # Move one dot along path
-        dotIndex = 0
-        dots[dotIndex].clear_updaters()
+        for dotIndex in range(len(dots)):
+            self.play(Indicate(shoot_button))
+            dots[dotIndex].clear_updaters()
+            self.shootDot(dots[dotIndex], particles[dotIndex], boundary)
 
-        startPoint = dots[dotIndex].get_center()
-        endPoint = boundary.get_center() + np.array([boundaryRadius, 0, 0])
+
+    def shootDot(self, dot: Mobject, particle: Particle, boundary: Mobject):
+        pathToEdge = self.pathToEdge(dot, boundary)
+        # self.add(pathToEdge)
+        self.play(
+            MoveAlongPath(dot, pathToEdge),
+            run_time = pathToEdge.get_arc_length() /  particle.maxSpeed,
+            rate_func = rate_functions.linear
+        )
+
+        path = self.generatePath()
+        # Move the path such that the start point is at the right edge of the circle
+        # I don't know why this works but it somehow does
+        path.shift(RIGHT * boundary.get_edge_center(RIGHT)[0] + UP * boundary.get_edge_center(RIGHT)[1])
+        self.add(path)
+
+        self.play(
+            MoveAlongPath(dot, path),
+            run_time = path.get_arc_length() /  particle.maxSpeed,
+            rate_func = rate_functions.ease_out_sine
+        )
+
+        
+    def pathToEdge(self, dot: Mobject, boundary: Mobject):
+        startPoint = dot.get_center()
+        endPoint = boundary.get_center() + np.array([boundary.radius, 0, 0])
         startHandle = np.array([
             startPoint[0], 
             startPoint[1] - (startPoint[1] - endPoint[1]) / 2, 
@@ -140,35 +172,26 @@ class first(Scene):
             startPoint[0] - (startPoint[0] - endPoint[0]) / 2, 
             endPoint[1], 
             0])
-        
-        
+    
         pathToEdge = CubicBezier(startPoint, startHandle, endHandle, endPoint)
-        # self.add(pathToEdge)
-        self.play(
-            MoveAlongPath(dots[dotIndex], pathToEdge),
-            run_time = pathToEdge.get_arc_length() /  particles[dotIndex].maxSpeed,
-            rate_func = rate_functions.linear
-        )
+        return pathToEdge
+        
 
+    def generatePath(self):
         isSpinUp = np.random.randint(0, 2) == 0
-        function = ParametricFunction(self.spinUpFunction if isSpinUp else self.spinDownFunction, t_range=[0, 5.5])
+        function = ParametricFunction(self.spinUpFunction if isSpinUp else self.spinDownFunction, t_range=[0, 7])
+        return function
 
-        # Move the function such that the start point is at the right edge of the circle
-        # I don't know why this works but it somehow does
-        function.shift(RIGHT * boundary.get_edge_center(RIGHT)[0] + UP * boundary.get_edge_center(RIGHT)[1])
-
-        # self.add(function)
-
-        self.play(
-            MoveAlongPath(dots[dotIndex], function),
-            run_time = function.get_arc_length() /  particles[dotIndex].maxSpeed,
-            rate_func = rate_functions.ease_out_sine
-        )
-
-        self.wait(10)
+    def generateRandomPath(self):
+        multiplier = np.random.uniform(-0.1, 0.1)
+        function = ParametricFunction(lambda t: self.randomSpinFunction(t, multiplier), t_range=[0, 7])
+        return function
         
     def spinUpFunction(self, t):
-        return np.array([t, 0.2 * (t - 2) ** 2 if t > 2 else 0, 0])
+        return np.array([t, 0.1 * (t - 2.5) ** 2 if t > 2.5 else 0, 0])
 
     def spinDownFunction(self, t):
-        return np.array([t, -0.2 * (t - 2) ** 2 if t > 2 else 0, 0])
+        return np.array([t, -0.1 * (t - 2.5) ** 2 if t > 2.5 else 0, 0])
+    
+    def randomSpinFunction(self, t, multiplier):
+        return np.array([t, multiplier * (t - 2.5) ** 2 if t > 2.5 else 0, 0])
