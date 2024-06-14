@@ -9,6 +9,9 @@ __pycache__/
 # MacOS 
 .DS_Store
 
+# Manim cache and media files
+media/
+
 # Distribution / packaging
 .Python
 build/
