@@ -1,2 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/suraj/Library/CloudStorage/OneDrive-PlakshaUniversity/QC-Manimations/QC-Manimations-Code/tests/media/videos/moveAlongPath/720p30/partial_movie_files/Move/2016333726_281511399_707127306.mp4'
