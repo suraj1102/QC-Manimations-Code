@@ -3,7 +3,7 @@ import numpy as np
 import random
 from typing import List
 from Magnets import Magnets
-
+import vector_helpers
 
 class Particle:
     def __init__(self, particleRadius:float,  boundaryRadius: float, boundaryPosition: np.array) -> None:
@@ -110,11 +110,16 @@ class first(Scene):
 
         numParticles = 5
 
-        dots = VGroup(*[Dot().scale(1.2) for _ in range(numParticles)])
+        dots = VGroup(*[Dot().scale(1.5) for _ in range(numParticles)])
         particles = [Particle(dots[0].radius, boundaryRadius, boundaryPosition) for _ in range(numParticles)]
 
         shoot_button = Magnets().create_textbox(BLUE, "Shoot", YELLOW, 1, 3.5).scale(0.3).next_to(boundary, DOWN, buff=1)
         self.add(shoot_button)
+
+        mmVector = Vector(vector_helpers.randomDirection(), color=GREEN).scale(0.6, scale_tips=True)
+        mmVector.next_to(boundary, UP, buff=1)
+        mmVectorLabel = Text("Spin", color=GREEN).scale(0.3).next_to(mmVector, DOWN)
+        self.add(mmVector, mmVectorLabel)
 
         def dot_updater(dot: Mobject, dt, particle_index):
             particles[particle_index].updatePosition(dt)
@@ -138,28 +143,50 @@ class first(Scene):
             dots[dotIndex].clear_updaters()
             self.shootDot(dots[dotIndex], particles[dotIndex], boundary)
 
+        self.wait()
+
 
     def shootDot(self, dot: Mobject, particle: Particle, boundary: Mobject):
         pathToEdge = self.pathToEdge(dot, boundary)
         # self.add(pathToEdge)
-        self.play(
-            MoveAlongPath(dot, pathToEdge),
-            run_time = pathToEdge.get_arc_length() /  particle.maxSpeed,
-            rate_func = rate_functions.linear
-        )
 
-        path = self.generatePath()
+
+        vectorDir = vector_helpers.randomDirection()
+        quadrant = vector_helpers.findQuadtrant(vectorDir)
+        up = quadrant in [0, 1]
+        v = Vector(vectorDir, color=GREEN)
+        v.scale(0.6, scale_tips=True)
+
+        v.add_updater(lambda mob: mob.move_to(dot.get_center()))
+        v.update()
+
+        targetDir = UP if quadrant in [0, 1] else DOWN
+        angle = vector_helpers.angle_between(targetDir, vectorDir)
+
+        if quadrant in [1, 3]:
+            angle = -angle
+
+        path = self.generatePath(up)
         # Move the path such that the start point is at the right edge of the circle
         # I don't know why this works but it somehow does
         path.shift(RIGHT * boundary.get_edge_center(RIGHT)[0] + UP * boundary.get_edge_center(RIGHT)[1])
         path.set_stroke(opacity=0.3)
-        self.add(path)
+
+        self.play(
+            MoveAlongPath(dot, pathToEdge),
+            FadeIn(v),
+            run_time = pathToEdge.get_arc_length() /  particle.maxSpeed,
+            rate_func = rate_functions.linear
+        )
 
         self.play(
             MoveAlongPath(dot, path),
+            v.animate.rotate(angle , about_point=v.get_start()),
             run_time = path.get_arc_length() /  particle.maxSpeed,
-            rate_func = rate_functions.ease_out_sine
+            rate_func = rate_functions.linear,
         )
+
+        self.play(FadeOut(v))
 
         
     def pathToEdge(self, dot: Mobject, boundary: Mobject):
@@ -178,8 +205,13 @@ class first(Scene):
         return pathToEdge
         
 
-    def generatePath(self):
-        isSpinUp = np.random.randint(0, 2) == 0
+    def generatePath(self, up=None):
+        if up == True:
+            isSpinUp = True
+        elif up == False:
+            isSpinUp = False
+        else: 
+            isSpinUp = np.random.randint(0, 2) == 0
         function = ParametricFunction(self.spinUpFunction if isSpinUp else self.spinDownFunction, t_range=[0, 7])
         return function
 
