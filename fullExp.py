@@ -152,6 +152,7 @@ class first(Scene):
         # Move the path such that the start point is at the right edge of the circle
         # I don't know why this works but it somehow does
         path.shift(RIGHT * boundary.get_edge_center(RIGHT)[0] + UP * boundary.get_edge_center(RIGHT)[1])
+        path.set_stroke(opacity=0.3)
         self.add(path)
 
         self.play(
