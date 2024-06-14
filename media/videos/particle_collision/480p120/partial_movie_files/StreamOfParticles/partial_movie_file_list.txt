@@ -1,2 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/suraj/Documents/Coding/Manimations/QuantumComputing/media/videos/particle_collision/480p120/partial_movie_files/StreamOfParticles/4148071975_1292387967_3526577712.mp4'
